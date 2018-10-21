@@ -1,3 +1,3 @@
 from complex_number.core import PurelyImaginaryNumber
 from complex_number.serialize import DefaultPurelyImaginaryNumberStringSerializer
-from complex_number.validator import ImaginaryPartValidator
+from complex_number.normalize import NonZeroIntegerNormalizer

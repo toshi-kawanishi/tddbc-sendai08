@@ -1,6 +1,6 @@
 import unittest
 
-from complex_number import PurelyImaginaryNumber, DefaultPurelyImaginaryNumberStringSerializer, ImaginaryPartValidator
+from complex_number import PurelyImaginaryNumber, DefaultPurelyImaginaryNumberStringSerializer, NonZeroIntegerNormalizer
 
 
 class TestPurelyImaginaryNumber(unittest.TestCase):
@@ -34,13 +34,14 @@ class TestDefaultPurelyImaginaryNumberStringSerializer(unittest.TestCase):
         self.assertEqual("-i", DefaultPurelyImaginaryNumberStringSerializer.serialize(PurelyImaginaryNumber(-1)))
 
 
-class TestImaginaryPartValidator(unittest.TestCase):
+class TestNonZeroIntegerNormalizer(unittest.TestCase):
 
     def test_validate__0以外をvalidとして判定すること(self):
-        self.assertTrue(ImaginaryPartValidator.validate(1))
+        self.assertTrue(NonZeroIntegerNormalizer.normalize(1))
 
     def test_validate__0をinvalidとして判定すること(self):
-        self.assertFalse(ImaginaryPartValidator.validate(0))
+        with self.assertRaises(ValueError):
+            NonZeroIntegerNormalizer.normalize(0)
 
 
 if __name__ == "__main__":

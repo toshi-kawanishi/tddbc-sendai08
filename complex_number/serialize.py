@@ -1,14 +1,14 @@
-class ComplexNumberFormatter(object):
+class ComplexNumberSerializer(object):
     pass
 
 
-class DefaultPurelyImaginaryNumberFormatter(ComplexNumberFormatter):
+class DefaultPurelyImaginaryNumberStringSerializer(ComplexNumberSerializer):
 
     OMITTING_TARGETS = [1, -1]
     IMAGINARY_UNIT = "i"
 
     @classmethod
-    def format(cls, number):
+    def serialize(cls, number):
         return cls._format_imaginary_part(number.imaginary_part())
 
     @classmethod

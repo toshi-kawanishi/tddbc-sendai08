@@ -1,3 +1,3 @@
-from complex_number.core import PurelyImaginaryNumber
-from complex_number.serialization import DefaultPurelyImaginaryNumberStringSerializer
+from complex_number.core import ImaginaryNumber, PurelyImaginaryNumber
+from complex_number.serialization import DefaultImaginaryNumberStringSerializer
 from complex_number.normalization import NonZeroIntegerNormalizer

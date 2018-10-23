@@ -1,6 +1,6 @@
 from typing import Any
 
-from complex_number.serialization import DefaultPurelyImaginaryNumberStringSerializer
+from complex_number.serialization import DefaultImaginaryNumberStringSerializer
 from complex_number.normalization import NonZeroIntegerNormalizer
 
 
@@ -13,7 +13,41 @@ class RealNumber(ComplexNumber):
 
 
 class ImaginaryNumber(ComplexNumber):
-    pass
+
+    class Normalizers:
+        REAL_PART = NonZeroIntegerNormalizer
+        IMAGINARY_PART = NonZeroIntegerNormalizer
+
+    def __init__(self, real_part: int, imaginary_part: int,
+                 string_serializer=DefaultImaginaryNumberStringSerializer):
+        self._real_part = real_part
+        self._imaginary_part = imaginary_part
+        self._string_serializer = string_serializer
+
+    def __setattr__(self, name: str, value: Any):
+        if name == '_real_part':
+            self.__dict__[name] = type(self).Normalizers.REAL_PART.normalize(value)
+        elif name == '_imaginary_part':
+            self.__dict__[name] = type(self).Normalizers.IMAGINARY_PART.normalize(value)
+        else:
+            self.__dict__[name] = value
+
+    def __eq__(self, other: Any) -> bool:
+        return (isinstance(other, type(self))
+                and self.real_part() == other.real_part()
+                and self.imaginary_part() == other.imaginary_part())
+
+    def __str__(self):
+        return self._string_serializer.serialize(self)
+
+    def real_part(self) -> int:
+        return self._real_part
+
+    def imaginary_part(self) -> int:
+        return self._imaginary_part
+
+    def conjugate(self):
+        return ImaginaryNumber(self.real_part(), -1 * self.imaginary_part())
 
 
 class PurelyImaginaryNumber(ImaginaryNumber):
@@ -21,24 +55,20 @@ class PurelyImaginaryNumber(ImaginaryNumber):
     class Normalizers:
         IMAGINARY_PART = NonZeroIntegerNormalizer
 
-    def __init__(self, imaginary_part: int, string_serializer=DefaultPurelyImaginaryNumberStringSerializer):
-        self._imaginary_part = imaginary_part
-        self._string_serializer = string_serializer
+    def __init__(self, imaginary_part: int,
+                 string_serializer=DefaultImaginaryNumberStringSerializer):
+        super(type(self), self).__init__(None, imaginary_part, string_serializer)
 
     def __setattr__(self, name: str, value: Any):
-        if name == '_imaginary_part':
+        if name == '_real_part':
+            pass
+        elif name == '_imaginary_part':
             self.__dict__[name] = type(self).Normalizers.IMAGINARY_PART.normalize(value)
         else:
             self.__dict__[name] = value
 
-    def __str__(self):
-        return self._string_serializer.serialize(self)
-
-    def __eq__(self, other: Any) -> bool:
-        return isinstance(other, type(self)) and self.imaginary_part() == other.imaginary_part()
-
-    def imaginary_part(self) -> int:
-        return self._imaginary_part
+    def real_part(self):
+        return None
 
     def conjugate(self):
         return PurelyImaginaryNumber(-1 * self.imaginary_part())

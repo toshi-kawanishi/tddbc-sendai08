@@ -1,7 +1,7 @@
 from typing import Any
 
-from complex_number.serialize import DefaultPurelyImaginaryNumberStringSerializer
-from complex_number.normalize import NonZeroIntegerNormalizer
+from complex_number.serialization import DefaultPurelyImaginaryNumberStringSerializer
+from complex_number.normalization import NonZeroIntegerNormalizer
 
 
 class ComplexNumber(object):

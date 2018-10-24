@@ -1,7 +1,7 @@
 from typing import Any
 
 from complex_number.serialization import DefaultImaginaryNumberStringSerializer
-from complex_number.normalization import NonZeroIntegerNormalizer
+from complex_number.normalization import IntegerNormalizer, NonZeroIntegerNormalizer
 
 
 class ComplexNumber(object):
@@ -15,7 +15,7 @@ class RealNumber(ComplexNumber):
 class ImaginaryNumber(ComplexNumber):
 
     class Normalizers:
-        REAL_PART = NonZeroIntegerNormalizer
+        REAL_PART = IntegerNormalizer
         IMAGINARY_PART = NonZeroIntegerNormalizer
 
     def __init__(self, real_part: int, imaginary_part: int,
@@ -33,9 +33,10 @@ class ImaginaryNumber(ComplexNumber):
             self.__dict__[name] = value
 
     def __eq__(self, other: Any) -> bool:
-        return (isinstance(other, type(self))
-                and self.real_part() == other.real_part()
-                and self.imaginary_part() == other.imaginary_part())
+        if isinstance(other, type(self)):
+            return self.real_part() == other.real_part() and self.imaginary_part() == other.imaginary_part()
+        else:
+            return TypeUtils.number_with_exact_type(other) == TypeUtils.number_with_exact_type(self)
 
     def __str__(self):
         return self._string_serializer.serialize(self)
@@ -72,3 +73,22 @@ class PurelyImaginaryNumber(ImaginaryNumber):
 
     def conjugate(self):
         return PurelyImaginaryNumber(-1 * self.imaginary_part())
+
+
+class TypeUtils(object):
+
+    @staticmethod
+    def exact_type(number: ImaginaryNumber):
+        if number.real_part() is None or number.real_part() == 0:
+            return PurelyImaginaryNumber
+        else:
+            return number
+
+    @classmethod
+    def number_with_exact_type(cls, number: ImaginaryNumber):
+        new_type = cls.exact_type(number)
+
+        if new_type == PurelyImaginaryNumber:
+            return PurelyImaginaryNumber(number.imaginary_part())
+        else:
+            return number

@@ -31,3 +31,11 @@ class NonZeroIntegerNormalizer(ComplexNumberAttributeNormalizer):
     @Decorators.check_non_zero
     def normalize(value: Any):
         return value
+
+
+class IntegerNormalizer(object):
+
+    @staticmethod
+    @Decorators.to_int
+    def normalize(value: Any):
+        return value
